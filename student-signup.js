@@ -15,7 +15,7 @@ let formData = {
     age: '',
     parentEmail: '',
     firstName: '',
-    username: '',
+    email: '',
     password: ''
 };
 
@@ -79,12 +79,12 @@ function goToPanel(panelNumber) {
     hideMessages();
 }
 
-async function checkUsernameAvailability(username) {
+async function checkEmailAvailability(email) {
     try {
         const { data, error } = await supabase
             .from('user_profiles')
-            .select('username')
-            .eq('username', username)
+            .select('email')
+            .eq('email', email)
             .maybeSingle();
 
         if (error && error.code !== 'PGRST116') {
@@ -93,7 +93,7 @@ async function checkUsernameAvailability(username) {
 
         return !data;
     } catch (error) {
-        console.error('Error checking username:', error);
+        console.error('Error checking email:', error);
         return false;
     }
 }
@@ -136,7 +136,7 @@ panel2Form.addEventListener('submit', async (e) => {
     hideMessages();
 
     const firstName = document.getElementById('firstName').value.trim();
-    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const captcha = document.getElementById('captcha').value;
 
@@ -145,14 +145,14 @@ panel2Form.addEventListener('submit', async (e) => {
         return;
     }
 
-    if (!username) {
-        showError('Please choose a username');
+    if (!email) {
+        showError('Please enter your email address');
         return;
     }
 
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-    if (!usernameRegex.test(username)) {
-        showError('Username must be 3-20 characters with letters, numbers, and underscore only');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showError('Please enter a valid email address');
         return;
     }
 
@@ -173,26 +173,19 @@ panel2Form.addEventListener('submit', async (e) => {
     signupBtnText.innerHTML = '<span class="loading-spinner"></span>Creating Account...';
 
     try {
-        const isUsernameAvailable = await checkUsernameAvailability(username);
-        if (!isUsernameAvailable) {
-            showError('Username is already taken. Please choose another one.');
+        const isEmailAvailable = await checkEmailAvailability(email);
+        if (!isEmailAvailable) {
+            showError('This email is already registered. Please use a different email or log in.');
             signupBtn.disabled = false;
             signupBtnText.textContent = 'Sign Up';
             return;
         }
 
-        // Use a valid-looking email domain for student accounts
-        // Students authenticate with username, but Supabase requires email format
-        const signupEmail = `${username}@student.sciquest.app`;
-
         const { data: authData, error: authError } = await supabase.auth.signUp({
-            email: signupEmail,
+            email: email,
             password: password,
             options: {
-                // Email confirmation should be disabled in Supabase Dashboard
-                // Navigate to: Authentication > Email > Confirm email (turn OFF)
                 data: {
-                    username: username,
                     account_type: 'student',
                     first_name: firstName
                 }
@@ -206,10 +199,9 @@ panel2Form.addEventListener('submit', async (e) => {
                 .from('user_profiles')
                 .insert({
                     id: authData.user.id,
-                    email: formData.parentEmail,
+                    email: email,
                     account_type: 'student',
                     first_name: firstName,
-                    username: username,
                     age: formData.age,
                     parent_email: formData.parentEmail
                 });
@@ -220,7 +212,7 @@ panel2Form.addEventListener('submit', async (e) => {
             }
 
             localStorage.setItem('newStudentSignup', 'true');
-            localStorage.setItem('studentUsername', username);
+            localStorage.setItem('studentEmail', email);
 
             showSuccess('Account created successfully! Redirecting to avatar selection...');
 
@@ -232,12 +224,9 @@ panel2Form.addEventListener('submit', async (e) => {
         console.error('Signup error:', error);
 
         if (error.message.includes('User already registered')) {
-            showError('This username is already taken. Please choose another one.');
+            showError('This email is already registered. Please use a different email or log in.');
         } else if (error.message.includes('duplicate key')) {
-            showError('Username is already taken. Please choose another one.');
-        } else if (error.message.includes('invalid') && error.message.includes('email')) {
-            showError('Unable to create account. Please contact support or try again later.');
-            console.error('Email validation error - Supabase email confirmation may need to be disabled');
+            showError('This email is already registered. Please use a different email or log in.');
         } else {
             showError(error.message || 'An error occurred. Please try again.');
         }
