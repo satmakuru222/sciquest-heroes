@@ -278,6 +278,18 @@
             to { transform: rotate(360deg); }
         }
 
+        .link-text {
+            color: #a855f7;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .link-text:hover {
+            color: #ec4899;
+            text-decoration: underline;
+        }
+
         .panel {
             display: none;
         }
@@ -499,6 +511,15 @@
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <div class="mt-6">
+                <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 16px; text-align: center;">
+                    <p class="text-slate-700 font-bold text-base">
+                        Already have an account?
+                        <a href="auth.html?type=student&mode=login" class="link-text" style="font-size: 17px; text-decoration: underline; margin-left: 4px;">Log In</a>
+                    </p>
+                </div>
             </div>
         </div>
     </section>

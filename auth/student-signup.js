@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { supabaseConfig } from '../config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -252,9 +252,9 @@ panel2Form.addEventListener('submit', async (e) => {
         const errorMsg = error.message || '';
 
         if (errorMsg.toLowerCase().includes('already registered') || errorMsg.toLowerCase().includes('already exists')) {
-            showError('This email is already registered. Please use a different email or try logging in at auth.html');
+            showError('This email is already registered. Please use a different email or try logging in at auth/auth.html');
         } else if (errorMsg.includes('duplicate key')) {
-            showError('This email is already registered. Please use a different email or try logging in at auth.html');
+            showError('This email is already registered. Please use a different email or try logging in at auth/auth.html');
         } else if (errorMsg.includes('violates check constraint')) {
             showError('Unable to create student account. Please check your information and try again.');
         } else if (errorMsg.toLowerCase().includes('email') && errorMsg.toLowerCase().includes('invalid')) {

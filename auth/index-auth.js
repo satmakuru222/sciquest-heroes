@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { supabaseConfig } from '../config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -18,13 +18,13 @@ async function checkAuthAndUpdateUI() {
 
         if (profile) {
             if (profile.account_type === 'parent') {
-                window.location.href = 'parent-dashboard.html';
+                window.location.href = 'dashboards/parent-dashboard.html';
                 return;
             } else if (profile.account_type === 'teacher') {
-                window.location.href = 'teacher-dashboard.html';
+                window.location.href = 'dashboards/teacher-dashboard.html';
                 return;
             } else if (profile.account_type === 'student') {
-                window.location.href = 'student-dashboard.html';
+                window.location.href = 'dashboards/student-dashboard.html';
                 return;
             }
         }
@@ -203,11 +203,11 @@ function addUserMenuToNavbar(profile) {
 
 function getDashboardLink(accountType) {
     if (accountType === 'parent') {
-        return 'parent-dashboard.html';
+        return 'dashboards/parent-dashboard.html';
     } else if (accountType === 'teacher') {
-        return 'teacher-dashboard.html';
+        return 'dashboards/teacher-dashboard.html';
     } else if (accountType === 'student') {
-        return 'student-dashboard.html';
+        return 'dashboards/student-dashboard.html';
     }
     return 'index.html#avatars';
 }

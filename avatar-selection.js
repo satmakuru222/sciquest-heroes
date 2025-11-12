@@ -106,7 +106,7 @@ confirmBtn.addEventListener('click', async () => {
         localStorage.removeItem('newStudentSignup');
 
         setTimeout(() => {
-            window.location.href = 'student-dashboard.html';
+            window.location.href = 'dashboards/student-dashboard.html';
         }, 500);
     } catch (error) {
         showError('Failed to save avatar. Please try again.');
@@ -117,14 +117,14 @@ confirmBtn.addEventListener('click', async () => {
 
 skipBtn.addEventListener('click', () => {
     localStorage.removeItem('newStudentSignup');
-    window.location.href = 'student-dashboard.html';
+    window.location.href = 'dashboards/student-dashboard.html';
 });
 
 async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-        window.location.href = 'auth.html';
+        window.location.href = 'auth/auth.html';
         return;
     }
 

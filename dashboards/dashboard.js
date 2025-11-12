@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { supabaseConfig } from '../config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -12,11 +12,13 @@ const logoutBtn = document.getElementById('logoutBtn');
 const userAvatar = document.getElementById('userAvatar');
 const userName = document.getElementById('userName');
 
+let currentAccountType = null;
+
 async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-        window.location.href = 'auth.html';
+        window.location.href = '../auth/auth.html';
         return;
     }
 
@@ -32,7 +34,7 @@ async function checkAuth() {
     }
 
     if (!profile) {
-        window.location.href = 'auth.html';
+        window.location.href = '../auth/auth.html';
         return;
     }
 
@@ -44,7 +46,7 @@ async function checkAuth() {
         } else if (profile.account_type === 'student') {
             window.location.href = 'student-dashboard.html';
         } else {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
         return;
     }
@@ -55,10 +57,13 @@ async function checkAuth() {
         } else if (profile.account_type === 'student') {
             window.location.href = 'student-dashboard.html';
         } else {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
         return;
     }
+
+    // Store account type for logout redirect
+    currentAccountType = profile.account_type;
 
     loadUserProfile(session.user.id);
 }
@@ -119,7 +124,11 @@ logoutBtn.addEventListener('click', async () => {
         localStorage.clear();
         sessionStorage.clear();
 
-        window.location.href = 'auth.html';
+        // Redirect to auth page with account type and mode query parameters
+        const redirectUrl = currentAccountType 
+            ? `../auth/auth.html?type=${currentAccountType}&mode=login`
+            : '../auth/auth.html';
+        window.location.href = redirectUrl;
     } catch (error) {
         console.error('Logout error:', error);
         alert('Failed to logout. Please try again.');

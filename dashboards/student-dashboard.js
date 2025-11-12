@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { supabaseConfig } from '../config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -19,7 +19,7 @@ async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-        window.location.href = 'auth.html';
+        window.location.href = '../auth/auth.html';
         return;
     }
 
@@ -35,7 +35,7 @@ async function checkAuth() {
     }
 
     if (!profile) {
-        window.location.href = 'auth.html';
+        window.location.href = '../auth/auth.html';
         return;
     }
 
@@ -45,7 +45,7 @@ async function checkAuth() {
         } else if (profile.account_type === 'teacher') {
             window.location.href = 'teacher-dashboard.html';
         } else {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
         return;
     }
@@ -56,7 +56,7 @@ async function checkAuth() {
 async function loadUserProfile(profile) {
     try {
         const displayName = profile.first_name || profile.full_name || profile.username || 'Hero';
-        userName.textContent = displayName;
+        userName.textContent = profile.email || displayName;
         welcomeMessage.textContent = `Welcome back, ${displayName}!`;
 
         if (profile.avatar_url) {
@@ -65,10 +65,11 @@ async function loadUserProfile(profile) {
         } else if (profile.first_name) {
             const initial = profile.first_name.charAt(0).toUpperCase();
             userAvatar.textContent = initial;
-            avatarDisplay.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #22c55e, #16a34a); font-size: 48px; font-weight: 800; color: white;">${initial}</div>`;
+            // Update avatar display with initial in a styled div
+            avatarDisplay.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); font-size: 36px; font-weight: 800; color: white; border-radius: 50%;">${initial}</div>`;
         } else {
             userAvatar.innerHTML = '<i class="fas fa-user"></i>';
-            avatarDisplay.innerHTML = '<i class="fas fa-user text-white text-5xl"></i>';
+            avatarDisplay.innerHTML = '<i class="fas fa-user text-slate-400 text-4xl"></i>';
         }
 
         if (profile.grade_level) {
@@ -99,7 +100,7 @@ logoutBtn.addEventListener('click', async () => {
         localStorage.clear();
         sessionStorage.clear();
 
-        window.location.href = 'auth.html';
+        window.location.href = '../auth/auth.html?type=student&mode=login';
     } catch (error) {
         console.error('Logout error:', error);
         alert('Failed to logout. Please try again.');
